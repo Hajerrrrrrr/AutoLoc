@@ -5,7 +5,10 @@ import lombok.*;
 
 @Entity
 @Table(name = "employe")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Employe {
 
     @Id
@@ -21,4 +24,8 @@ public class Employe {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private RoleEmploye role;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "id_agence")
+    private Agence agence;
 }
