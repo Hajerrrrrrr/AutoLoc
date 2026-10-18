@@ -1,9 +1,9 @@
 package tn.esprit.autoloc.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.autoloc.domain.Maintenance;
+import tn.esprit.autoloc.exception.ResourceNotFoundException;
 import tn.esprit.autoloc.repository.IMaintenanceRepository;
 
 import java.util.List;
@@ -15,31 +15,47 @@ public class MaintenanceServiceImpl implements IMaintenanceService {
     private final IMaintenanceRepository maintenanceRepository;
 
     @Override
-    public Maintenance ajouter(Maintenance maintenance) {
-        return maintenanceRepository.save(maintenance);
-    }
-
-    @Override
-    public Maintenance modifier(Maintenance maintenance) {
-        if (!maintenanceRepository.existsById(maintenance.getIdMaintenance())) {
-            throw new EntityNotFoundException("Maintenance introuvable : id " + maintenance.getIdMaintenance());
+    public Maintenance create(Maintenance entite) {
+        if (entite.getIdMaintenance() != null) {
+            throw new IllegalArgumentException("Un nouveau maintenance ne doit pas avoir d'identifiant");
         }
-        return maintenanceRepository.save(maintenance);
+        valider(entite);
+        return maintenanceRepository.save(entite);
     }
 
     @Override
-    public Maintenance recupererParId(Long id) {
+    public Maintenance findById(Long id) {
         return maintenanceRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Maintenance introuvable : id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Maintenance", id));
     }
 
     @Override
-    public List<Maintenance> recupererTous() {
+    public List<Maintenance> findAll() {
         return maintenanceRepository.findAll();
     }
 
     @Override
-    public void supprimer(Long id) {
+    public Maintenance update(Long id, Maintenance entite) {
+        valider(entite);
+        Maintenance existant = findById(id);
+        existant.setDateDebut(entite.getDateDebut());
+        existant.setDateFin(entite.getDateFin());
+        existant.setDescription(entite.getDescription());
+        return maintenanceRepository.save(existant);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        if (!maintenanceRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Maintenance", id);
+        }
         maintenanceRepository.deleteById(id);
+    }
+
+    private void valider(Maintenance entite) {
+        if (entite.getDateDebut() != null && entite.getDateFin() != null
+                && entite.getDateFin().isBefore(entite.getDateDebut())) {
+            throw new IllegalArgumentException("La date de fin ne peut pas être antérieure à la date de début");
+        }
     }
 }

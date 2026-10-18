@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface IEquipementService {
 
-    Equipement ajouter(Equipement equipement);
+    Equipement create(Equipement entite);
 
-    Equipement modifier(Equipement equipement);
+    Equipement findById(Long id);
 
-    Equipement recupererParId(Long id);
+    List<Equipement> findAll();
 
-    List<Equipement> recupererTous();
+    Equipement update(Long id, Equipement entite);
 
-    void supprimer(Long id);
+    void deleteById(Long id);
 }

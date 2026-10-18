@@ -1,23 +1,18 @@
 package tn.esprit.autoloc.service;
 
-import tn.esprit.autoloc.domain.StatutVehicule;
 import tn.esprit.autoloc.domain.Vehicule;
 
 import java.util.List;
 
 public interface IVehiculeService {
 
-    Vehicule ajouter(Vehicule vehicule);
+    Vehicule create(Vehicule entite);
 
-    Vehicule modifier(Long id, Vehicule vehicule);
+    Vehicule findById(Long id);
 
-    Vehicule recupererParId(Long id);
+    List<Vehicule> findAll();
 
-    List<Vehicule> recupererTous();
+    Vehicule update(Long id, Vehicule entite);
 
-    List<Vehicule> recupererParStatut(StatutVehicule statut);
-
-    Vehicule recupererParImmatriculation(String immatriculation);
-
-    void supprimer(Long id);
+    void deleteById(Long id);
 }

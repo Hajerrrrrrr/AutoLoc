@@ -2,10 +2,10 @@ package tn.esprit.autoloc.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,10 +29,10 @@ public class Contrat {
     @Column(nullable = false)
     private boolean valide;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id_reservation", unique = true)
+    @OneToOne
     private Reservation reservation;
 
-    @OneToMany(mappedBy = "contrat", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Paiement> paiements = new ArrayList<>();
+    @JsonIgnore
+    @OneToMany(mappedBy = "contrat")
+    private List<Paiement> paiements;
 }

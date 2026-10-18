@@ -1,9 +1,9 @@
 package tn.esprit.autoloc.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tn.esprit.autoloc.domain.Client;
+import tn.esprit.autoloc.exception.ResourceNotFoundException;
 import tn.esprit.autoloc.repository.IClientRepository;
 
 import java.util.List;
@@ -15,41 +15,52 @@ public class ClientServiceImpl implements IClientService {
     private final IClientRepository clientRepository;
 
     @Override
-    public Client ajouter(Client client) {
-        return clientRepository.save(client);
+    public Client create(Client entite) {
+        if (entite.getIdClient() != null) {
+            throw new IllegalArgumentException("Un nouveau client ne doit pas avoir d'identifiant");
+        }
+        valider(entite);
+        return clientRepository.save(entite);
     }
 
     @Override
-    public Client modifier(Long id, Client client) {
-        Client existant = recupererParId(id);
-        existant.setNom(client.getNom());
-        existant.setPrenom(client.getPrenom());
-        existant.setEmail(client.getEmail());
-        existant.setTelephone(client.getTelephone());
-        existant.setNumPermis(client.getNumPermis());
-        existant.setDateInscription(client.getDateInscription());
-        return clientRepository.save(existant);
-    }
-
-    @Override
-    public Client recupererParId(Long id) {
+    public Client findById(Long id) {
         return clientRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Client introuvable : id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Client", id));
     }
 
     @Override
-    public List<Client> recupererTous() {
+    public List<Client> findAll() {
         return clientRepository.findAll();
     }
 
     @Override
-    public Client recupererParEmail(String email) {
-        return clientRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException("Client introuvable : email " + email));
+    public Client update(Long id, Client entite) {
+        valider(entite);
+        Client existant = findById(id);
+        existant.setNom(entite.getNom());
+        existant.setPrenom(entite.getPrenom());
+        existant.setEmail(entite.getEmail());
+        existant.setTelephone(entite.getTelephone());
+        existant.setNumPermis(entite.getNumPermis());
+        existant.setDateInscription(entite.getDateInscription());
+        return clientRepository.save(existant);
     }
 
     @Override
-    public void supprimer(Long id) {
-        clientRepository.delete(recupererParId(id));
+    public void deleteById(Long id) {
+        if (!clientRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Client", id);
+        }
+        clientRepository.deleteById(id);
+    }
+
+    private void valider(Client entite) {
+        if (entite.getNom() == null || entite.getNom().isBlank()) {
+            throw new IllegalArgumentException("Le nom du client est obligatoire");
+        }
+        if (entite.getEmail() == null || entite.getEmail().isBlank()) {
+            throw new IllegalArgumentException("L'e-mail du client est obligatoire");
+        }
     }
 }

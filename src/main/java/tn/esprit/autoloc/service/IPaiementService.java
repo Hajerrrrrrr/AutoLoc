@@ -6,13 +6,7 @@ import java.util.List;
 
 public interface IPaiementService {
 
-    Paiement ajouter(Paiement paiement);
+    Paiement findById(Long id);
 
-    Paiement modifier(Paiement paiement);
-
-    Paiement recupererParId(Long id);
-
-    List<Paiement> recupererTous();
-
-    void supprimer(Long id);
+    List<Paiement> findAll();
 }
