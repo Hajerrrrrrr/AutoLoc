@@ -17,7 +17,7 @@ import tn.esprit.autoloc.service.IContratService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/contrats")
+@RequestMapping("/contrats")
 @RequiredArgsConstructor
 public class ContratController {
 
