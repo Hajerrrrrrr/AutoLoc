@@ -1,0 +1,28 @@
+package tn.esprit.autoloc.mapper;
+
+import org.springframework.stereotype.Component;
+import tn.esprit.autoloc.domain.Equipement;
+import tn.esprit.autoloc.dto.EquipementDTO;
+
+@Component
+public class EquipementMapper {
+
+    public EquipementDTO toDto(Equipement equipement) {
+        if (equipement == null) return null;
+        return EquipementDTO.builder()
+                .idEquipement(equipement.getIdEquipement())
+                .libelle(equipement.getLibelle())
+                .build();
+    }
+
+    public Equipement toEntity(EquipementDTO dto) {
+        if (dto == null) return null;
+        Equipement equipement = new Equipement();
+        updateEntity(dto, equipement);
+        return equipement;
+    }
+
+    public void updateEntity(EquipementDTO dto, Equipement equipement) {
+        equipement.setLibelle(dto.getLibelle());
+    }
+}
